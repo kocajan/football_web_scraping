@@ -1,0 +1,9 @@
+project:
+  scrape_data: False
+
+scraper:
+  obey_robots_txt: True
+  target_team: "TJ Sokol Kralovice"
+  base_url: "https://www.fotbal.cz"
+  central_url: "https://www.fotbal.cz/souteze/turnaje/zapas/510cb5a9-470b-4156-bde3-bf441d07b306?programFilter-team-id=7d25adf4-e9e6-427f-a97f-87b15b781352"
+  cookie_php_session: "PHPSESSID=g11sglvbfk2v0h5sidptd60l4g"
