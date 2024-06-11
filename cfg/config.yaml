@@ -1,5 +1,5 @@
 project:
-  scrape_data: False
+  scrape_data: True
 
 scraper:
   obey_robots_txt: True

@@ -40,7 +40,8 @@ class MatchSpider(scrapy.Spider):
         self.match_items = self.extract_match_info()
 
         # Get the links to the detailed match information
-        self.start_urls = [self.base_url + link for link in self.relative_urls]
+        self.all_urls = [self.base_url + link for link in self.relative_urls]
+        self.start_urls = [self.all_urls[0]]
 
         # Set up match counter
         self.match_counter = 0
@@ -121,10 +122,13 @@ class MatchSpider(scrapy.Spider):
         # Yield the information
         yield self.match_items[self.match_counter]
 
-        # Increment the match counter
+        # Increment the match counter and print the information about the scraped match
         self.match_counter += 1
-
         print(f"Match {self.match_counter} scraped.")
+
+        # Follow the next link if there are more matches
+        next_page = self.all_urls[self.match_counter]
+        yield scrapy.Request(url=next_page, callback=self.parse)
 
     def extract_match_info(self) -> [MatchItem, ...]:
         """
@@ -178,6 +182,7 @@ class MatchSpider(scrapy.Spider):
 
         # Extract both team names
         team_names = [span.get_text(strip=True) for span in match_element.find_all("span", class_="H7")]
+        match_item["team_names"] = team_names
 
         # Skip the match if the target team is not in the team names
         if self.target_team not in team_names:
@@ -186,7 +191,6 @@ class MatchSpider(scrapy.Spider):
         # Extract the link to the detailed match information and store the team names
         link = match_element.find('a', class_="MatchRound-match")["href"]
         self.relative_urls.append(link)
-        match_item["team_names"] = team_names
 
         # Extract the score
         score_element = match_element.find("strong", class_="H4 u-c-tertiary")
@@ -227,7 +231,6 @@ class MatchSpider(scrapy.Spider):
             elif key == "Poznámka":
                 key = "note"
             match_item[key] = value
-
         return match_item
 
     @staticmethod
